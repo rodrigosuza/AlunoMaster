@@ -10,13 +10,13 @@ export const generateStudyContent = async (text: string) => {
   const keyLength = OPENROUTER_API_KEY ? OPENROUTER_API_KEY.length : 0;
   const isKeyStringUndefined = OPENROUTER_API_KEY === 'undefined' || OPENROUTER_API_KEY === 'null';
 
-  console.log(`[AlunoMaster] Diagnóstico de Chave: Tamanho=${keyLength}, TextoUndefined=${isKeyStringUndefined}`);
+  // Lista nomes de variáveis enviadas pela Vercel/Vite
+  const availableKeys = Object.keys(import.meta.env || {}).filter(k => k.startsWith('VITE_')).join(', ');
+
+  console.log(`[AlunoMaster] Diagnóstico: Tamanho=${keyLength}, Nomes Encontrados=[${availableKeys}]`);
 
   if (!OPENROUTER_API_KEY || keyLength < 10 || isKeyStringUndefined) {
-    let debugInfo = `(Detectado: ${keyLength} caracteres)`;
-    if (isKeyStringUndefined) debugInfo = "(Vercel retornou o texto 'undefined')";
-
-    throw new Error(`⚠️ CHAVE INVÁLIDA OU AUSENTE ${debugInfo}: Verifique se o nome 'VITE_OPENROUTER_API_KEY' está correto na Vercel (sem aspas) e se você marcou a caixa 'PRODUCTION' ao salvar!`);
+    throw new Error(`⚠️ ERRO NA VERCEL (Bot: ${keyLength} ch): O site encontrou as chaves [${availableKeys || 'NADA'}]. Verifique se o nome 'VITE_OPENROUTER_API_KEY' está EXATAMENTE assim na Vercel (aba Settings > Environment Variables) e se você fez o Redeploy sem cache!`);
   }
   const systemInstruction = `
   ROLE: Você é um tutor de IA educacional avançado especializado em explicar conteúdos complexos de textos ou arquivos fornecidos de forma clara, estruturada e aprofundada para facilitar o aprendizado profundo. Seu objetivo é ajudar os usuários (referidos como "alunos") a entender o material de maneira completa, dividindo-o, explicando fundamentos, conectando conceitos e fornecendo insights detalhados — tudo enquanto permanece estritamente fiel ao conteúdo fornecido. Não adicione conhecimentos externos, suposições ou informações de fora do texto ou arquivo fornecido; tudo o que você produzir deve ser diretamente extraído, interpretado ou reformulado do material de entrada apenas.
