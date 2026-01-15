@@ -43,35 +43,35 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     // Save full_name in metadata so it's accessible via session.user.user_metadata
-    const { data, error: authError } = await supabase.auth.signUp({ 
-      email, 
+    const { data, error: authError } = await supabase.auth.signUp({
+      email,
       password,
       options: {
+        emailRedirectTo: window.location.origin,
         data: {
           full_name: name,
         }
       }
     });
-    
+
     if (authError) {
       setError(authError.message);
     } else if (data.user) {
       // Save phone number to profiles table (Sanitized)
-      // Note: This insert might fail if RLS requires auth and email confirmation is pending.
-      // We also store phone in metadata as a backup if needed.
       const cleanPhone = phone.replace(/\D/g, '');
-      
+
       const { error: profileError } = await supabase
         .from('profiles')
         .insert([{ id: data.user.id, phone: cleanPhone }]);
-      
+
       if (profileError) {
-        console.error("Error saving profile (likely RLS or pending auth):", profileError);
+        console.error("Erro ao salvar perfil:", profileError);
+        // Não bloqueamos o sucesso do cadastro, mas avisamos no console
       }
-      
-      setSuccess("Conta criada com sucesso! Verifique seu email para confirmar.");
+
+      setSuccess("Conta criada! Verifique seu email para confirmar e ativar seu acesso.");
     }
     setLoading(false);
   };
@@ -109,8 +109,8 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
     } else {
       // Step 2: Verify code and reveal email
       if (code === '123456') {
-         // In simulation, we just confirm success.
-         setSuccess(`Acesso validado! Tente logar com seu email principal.`);
+        // In simulation, we just confirm success.
+        setSuccess(`Acesso validado! Tente logar com seu email principal.`);
       } else {
         setError("Código inválido.");
       }
@@ -152,19 +152,19 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
           )}
 
           <form onSubmit={
-            view === 'login' ? handleLogin : 
-            view === 'register' ? handleRegister : 
-            view === 'forgot-password' ? handlePasswordReset : 
-            handleForgotLogin
+            view === 'login' ? handleLogin :
+              view === 'register' ? handleRegister :
+                view === 'forgot-password' ? handlePasswordReset :
+                  handleForgotLogin
           } className="space-y-3 sm:space-y-4">
-            
+
             {/* Name Input - Only for Register */}
             {view === 'register' && (
               <div className="space-y-1 sm:space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome Completo</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                  <input 
+                  <input
                     type="text" required
                     value={name} onChange={e => setName(e.target.value)}
                     placeholder="Seu nome"
@@ -179,7 +179,7 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">E-mail</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                  <input 
+                  <input
                     type="email" required
                     value={email} onChange={e => setEmail(e.target.value)}
                     placeholder="exemplo@email.com"
@@ -194,7 +194,7 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Senha</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                  <input 
+                  <input
                     type="password" required
                     value={password} onChange={e => setPassword(e.target.value)}
                     placeholder="••••••••"
@@ -209,7 +209,7 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Celular</label>
                 <div className="relative">
                   <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                  <input 
+                  <input
                     type="tel" required
                     value={phone} onChange={e => setPhone(e.target.value)}
                     placeholder="(00) 00000-0000"
@@ -222,7 +222,7 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
             {view === 'forgot-login' && step === 2 && (
               <div className="space-y-1 sm:space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Código SMS</label>
-                <input 
+                <input
                   type="text" required
                   value={code} onChange={e => setCode(e.target.value)}
                   placeholder="123456"
