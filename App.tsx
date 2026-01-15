@@ -198,6 +198,37 @@ const App: React.FC = () => {
   };
 
   // -----------------------------
+  
+  const deleteSession = async (sessionId: string) => {
+      // Optimistic update
+      const sessionToDelete = state.sessions.find(s => s.id === sessionId);
+      if (!sessionToDelete) return;
+
+      setState(prev => ({
+          ...prev,
+          sessions: prev.sessions.filter(s => s.id !== sessionId),
+          // Also remove from any folders locally
+          folders: prev.folders.map(f => ({
+              ...f,
+              sessionIds: f.sessionIds.filter(id => id !== sessionId)
+          }))
+      }));
+
+      // Supabase deletion
+      if (state.user && !state.user.id.startsWith('admin')) {
+          const { error } = await supabase
+              .from('sessions')
+              .delete()
+              .eq('id', sessionId);
+
+          if (error) {
+              console.error("Error deleting session:", error);
+              // Revert logic could go here if needed, but for now we trust the deletion
+          }
+      }
+  };
+
+  // -----------------------------
 
   const setView = (view: AppState['activeView'], sessionId?: string) => {
     setState(prev => ({
@@ -293,6 +324,7 @@ const App: React.FC = () => {
               onToggleFavorite={toggleFavorite}
               onCreateFolder={createFolder}
               onAddToFolder={addSessionToFolder}
+              onDeleteSession={deleteSession}
             />
           )}
         </div>
