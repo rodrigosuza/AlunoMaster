@@ -224,7 +224,13 @@ const App: React.FC = () => {
   }
 
   if (!state.user || isRecovering) {
-    return <Auth onAdminLogin={handleAdminLogin} initialView={isRecovering ? 'reset-password' : 'login'} />;
+    return (
+      <Auth
+        onAdminLogin={handleAdminLogin}
+        initialView={isRecovering ? 'reset-password' : 'login'}
+        onRecoveryComplete={() => setIsRecovering(false)}
+      />
+    );
   }
 
   return (

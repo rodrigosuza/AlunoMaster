@@ -1,18 +1,20 @@
 
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Mail, Lock, Phone, ArrowRight, Sparkles, Loader2, AlertCircle, CheckCircle2, User } from 'lucide-react';
+import { Mail, Lock, Phone, ArrowRight, Sparkles, Loader2, AlertCircle, CheckCircle2, User, Eye, EyeOff } from 'lucide-react';
 
 interface AuthProps {
   onAdminLogin: () => void;
+  onRecoveryComplete?: () => void;
   initialView?: 'login' | 'register' | 'forgot-password' | 'forgot-login' | 'reset-password';
 }
 
-export const Auth: React.FC<AuthProps> = ({ onAdminLogin, initialView = 'login' }) => {
+export const Auth: React.FC<AuthProps> = ({ onAdminLogin, onRecoveryComplete, initialView = 'login' }) => {
   const [view, setView] = useState<'login' | 'register' | 'forgot-password' | 'forgot-login' | 'reset-password'>(initialView);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Listen for Supabase recovery events
   React.useEffect(() => {
@@ -109,7 +111,12 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin, initialView = 'login' 
       setError(error.message);
     } else {
       setSuccess("Senha alterada com sucesso! Você já pode fazer login.");
-      setTimeout(() => setView('login'), 2000);
+      // Signal recovery is over
+      if (onRecoveryComplete) onRecoveryComplete();
+      setTimeout(() => {
+        setView('login');
+        setSuccess(null);
+      }, 2000);
     }
     setLoading(false);
   };
@@ -235,11 +242,18 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin, initialView = 'login' 
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                   <input
-                    type="password" required
+                    type={showPassword ? "text" : "password"} required
                     value={password} onChange={e => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-4 py-3 sm:py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 outline-none transition-all font-bold text-slate-900 text-sm"
+                    className="w-full pl-11 pr-12 py-3 sm:py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 outline-none transition-all font-bold text-slate-900 text-sm"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
             )}
