@@ -27,7 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
@@ -42,17 +42,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-6 md:p-8 flex flex-col h-full overflow-hidden">
-          
+
           {/* Header */}
           <div className="flex items-center justify-between mb-8 md:mb-12 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-xl shadow-indigo-200">
-                A
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-100 overflow-hidden">
+                <img src="/icon-512.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-black text-lg md:text-xl text-slate-900 tracking-tighter">AlunoMaster - AI</span>
             </div>
             {/* Close Button Mobile */}
-            <button 
+            <button
               onClick={onClose}
               className="md:hidden p-2 text-slate-400 hover:text-slate-600 active:scale-95 transition-transform"
             >
@@ -66,11 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
               <button
                 key={item.id}
                 onClick={() => setView(item.id as AppState['activeView'])}
-                className={`w-full flex items-center gap-4 px-5 py-3.5 md:py-4 rounded-2xl transition-all ${
-                  activeView === item.id 
-                    ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100' 
+                className={`w-full flex items-center gap-4 px-5 py-3.5 md:py-4 rounded-2xl transition-all ${activeView === item.id
+                    ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-semibold'
-                }`}
+                  }`}
               >
                 <item.icon size={22} strokeWidth={2.5} />
                 {item.label}
@@ -110,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
 
           {/* Footer */}
           <div className="mt-auto pt-6 border-t border-slate-50 shrink-0">
-            <button 
+            <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-5 py-3 text-slate-400 hover:text-red-600 transition-colors font-bold text-sm"
             >

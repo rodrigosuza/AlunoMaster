@@ -239,8 +239,8 @@ const App: React.FC = () => {
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-100 flex items-center px-4 z-40 justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-lg shadow-md">
-            A
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-md overflow-hidden">
+            <img src="/icon-512.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-black text-lg text-slate-900 tracking-tighter">AlunoMaster</span>
         </div>

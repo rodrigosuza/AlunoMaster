@@ -160,8 +160,8 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin, onRecoveryComplete, in
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <Sparkles size={60} />
           </div>
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center text-indigo-600 font-black text-xl sm:text-2xl shadow-xl mb-4 sm:mb-6">
-            A
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl mb-4 sm:mb-6 overflow-hidden">
+            <img src="/icon-512.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-2">AlunoMaster - AI</h2>
           <p className="text-indigo-100 font-medium text-sm sm:text-base">
