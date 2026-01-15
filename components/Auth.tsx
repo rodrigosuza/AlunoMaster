@@ -146,8 +146,8 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
   };
 
   return (
-    <div className="h-screen w-full bg-slate-50 overflow-y-auto flex flex-col items-center py-6 px-4 sm:px-6">
-      <div className="w-full max-w-md bg-white rounded-[24px] sm:rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden shrink-0 my-auto">
+    <div className="h-screen w-full bg-slate-50 overflow-hidden flex flex-col items-center py-6 px-4 sm:px-6 fixed inset-0 touch-none">
+      <div className="w-full max-w-md bg-white rounded-[24px] sm:rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden shrink-0 my-auto select-none">
         <div className="bg-indigo-600 p-6 sm:p-8 text-white relative">
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <Sparkles size={60} />
@@ -272,7 +272,7 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
 
             <button
               disabled={loading}
-              className="w-full bg-indigo-600 text-white py-3.5 sm:py-4 rounded-2xl font-black text-sm sm:text-base hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3 mt-4 sm:mt-6 active:scale-95"
+              className="w-full bg-indigo-600 text-white py-3.5 sm:py-4 rounded-2xl font-black text-sm sm:text-base hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3 mt-4 sm:mt-6 active:scale-[0.98] select-none touch-manipulation"
             >
               {loading ? <Loader2 className="animate-spin" /> : <ArrowRight size={20} />}
               {view === 'login' && 'Entrar na Plataforma'}
