@@ -1,0 +1,7 @@
+{
+  "name": "Aluno Master - AI",
+  "description": "Uma plataforma inteligente para transformar seus documentos em quizes interativos e resumos estruturados para facilitar seu aprendizado.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
