@@ -47,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
           <div className="flex items-center justify-between mb-8 md:mb-12 shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-100 overflow-hidden">
-                <img src="/icon-512.png" alt="Logo" className="w-full h-full object-cover" />
+                <img src="/icon.svg" alt="Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-black text-lg md:text-xl text-slate-900 tracking-tighter">AlunoMaster - AI</span>
             </div>
