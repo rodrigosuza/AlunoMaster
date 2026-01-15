@@ -3,6 +3,7 @@
 import { Question } from "../types";
 
 const OPENROUTER_API_KEY = (import.meta.env?.VITE_OPENROUTER_API_KEY) || '';
+const MODEL_NAME = 'google/gemini-flash-1.5';
 
 export const generateStudyContent = async (text: string) => {
   // Diagnóstico sem expor a chave real
