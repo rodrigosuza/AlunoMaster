@@ -8,10 +8,19 @@ interface AuthProps {
 }
 
 export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
-  const [view, setView] = useState<'login' | 'register' | 'forgot-password' | 'forgot-login'>('login');
+  const [view, setView] = useState<'login' | 'register' | 'forgot-password' | 'forgot-login' | 'reset-password'>('login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // New state for password reset
+  React.useEffect(() => {
+    // Check if we are coming from a password reset link
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      setView('reset-password');
+    }
+  }, []);
 
   // Form states
   const [email, setEmail] = useState('');
@@ -80,9 +89,25 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/`,
+    });
     if (error) setError(error.message);
     else setSuccess("Se este email estiver cadastrado, um link de recuperação foi enviado!");
+    setLoading(false);
+  };
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccess("Senha alterada com sucesso! Você já pode fazer login.");
+      setTimeout(() => setView('login'), 2000);
+    }
     setLoading(false);
   };
 
@@ -151,12 +176,16 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
             </div>
           )}
 
-          <form onSubmit={
-            view === 'login' ? handleLogin :
-              view === 'register' ? handleRegister :
-                view === 'forgot-password' ? handlePasswordReset :
-                  handleForgotLogin
-          } className="space-y-3 sm:space-y-4">
+          <form
+            onSubmit={
+              view === 'login' ? handleLogin :
+                view === 'register' ? handleRegister :
+                  view === 'forgot-password' ? handlePasswordReset :
+                    view === 'reset-password' ? handlePasswordUpdate :
+                      handleForgotLogin
+            }
+            className="space-y-3 sm:space-y-4"
+          >
 
             {/* Name Input - Only for Register */}
             {view === 'register' && (
@@ -189,9 +218,17 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
               </div>
             )}
 
-            {(view === 'login' || view === 'register') && (
+            {view === 'reset-password' && (
+              <p className="text-xs text-slate-500 font-medium px-1">
+                Digite sua nova senha abaixo para recuperar o acesso à sua conta.
+              </p>
+            )}
+
+            {(view === 'login' || view === 'register' || view === 'reset-password') && (
               <div className="space-y-1 sm:space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Senha</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  {view === 'reset-password' ? 'Nova Senha' : 'Senha'}
+                </label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                   <input
@@ -239,6 +276,7 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
               {view === 'login' && 'Entrar na Plataforma'}
               {view === 'register' && 'Criar minha Conta'}
               {view === 'forgot-password' && 'Enviar Código'}
+              {view === 'reset-password' && 'Atualizar Senha'}
               {view === 'forgot-login' && (step === 1 ? 'Enviar Código' : 'Recuperar Acesso')}
             </button>
           </form>
@@ -258,6 +296,6 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
