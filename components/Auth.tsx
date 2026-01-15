@@ -5,10 +5,11 @@ import { Mail, Lock, Phone, ArrowRight, Sparkles, Loader2, AlertCircle, CheckCir
 
 interface AuthProps {
   onAdminLogin: () => void;
+  initialView?: 'login' | 'register' | 'forgot-password' | 'forgot-login' | 'reset-password';
 }
 
-export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
-  const [view, setView] = useState<'login' | 'register' | 'forgot-password' | 'forgot-login' | 'reset-password'>('login');
+export const Auth: React.FC<AuthProps> = ({ onAdminLogin, initialView = 'login' }) => {
+  const [view, setView] = useState<'login' | 'register' | 'forgot-password' | 'forgot-login' | 'reset-password'>(initialView);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
