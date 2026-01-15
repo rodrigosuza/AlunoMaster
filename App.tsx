@@ -20,6 +20,7 @@ const App: React.FC = () => {
 
   const [initializing, setInitializing] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
+  const [isRecovering, setIsRecovering] = useState(false); // New state to force Auth view during password recovery
 
   // Auth Listener
   useEffect(() => {
@@ -32,13 +33,29 @@ const App: React.FC = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setState(prev => ({ ...prev, user: session?.user ?? null }));
       if (session?.user) fetchUserData(session.user.id);
-      else if (!state.user?.id?.startsWith('admin')) { 
+      else if (!state.user?.id?.startsWith('admin')) {
         // Only clear state if it's not our local admin
         setState(prev => ({ ...prev, sessions: [], folders: [] }));
       }
     });
 
     return () => subscription.unsubscribe();
+  }, []);
+
+  // Detect Password Recovery
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('type=recovery')) {
+        setIsRecovering(true);
+      } else {
+        setIsRecovering(false);
+      }
+    };
+
+    handleHashChange(); // Check on mount
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const fetchUserData = async (userId: string) => {
@@ -80,7 +97,7 @@ const App: React.FC = () => {
   const addSession = async (session: StudySession) => {
     const userId = state.user?.id;
     const newSession = { ...session, user_id: userId };
-    
+
     setState(prev => ({
       ...prev,
       sessions: [newSession, ...prev.sessions],
@@ -191,10 +208,10 @@ const App: React.FC = () => {
   // -----------------------------
 
   const setView = (view: AppState['activeView'], sessionId?: string) => {
-    setState(prev => ({ 
-      ...prev, 
-      activeView: view, 
-      currentSessionId: sessionId || prev.currentSessionId 
+    setState(prev => ({
+      ...prev,
+      activeView: view,
+      currentSessionId: sessionId || prev.currentSessionId
     }));
     setIsSidebarOpen(false); // Close sidebar on mobile when navigating
   };
@@ -214,22 +231,22 @@ const App: React.FC = () => {
     );
   }
 
-  if (!state.user) {
+  if (!state.user || isRecovering) {
     return <Auth onAdminLogin={handleAdminLogin} />;
   }
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 relative">
-      
+
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-100 flex items-center px-4 z-40 justify-between">
         <div className="flex items-center gap-2">
-           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-lg shadow-md">
+          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-lg shadow-md">
             A
           </div>
           <span className="font-black text-lg text-slate-900 tracking-tighter">AlunoMaster</span>
         </div>
-        <button 
+        <button
           onClick={() => setIsSidebarOpen(true)}
           className="p-2 text-slate-500 hover:bg-slate-50 rounded-lg active:scale-95 transition-all"
         >
@@ -237,33 +254,33 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      <Sidebar 
-        activeView={state.activeView} 
-        setView={setView} 
+      <Sidebar
+        activeView={state.activeView}
+        setView={setView}
         sessions={state.sessions}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      
+
       {/* Main Content - Add padding top for mobile header */}
       <main className="flex-1 overflow-y-auto p-4 md:p-12 custom-scrollbar pt-20 md:pt-12 w-full">
         <div className="max-w-7xl mx-auto h-full pb-20 md:pb-0"> {/* Extra padding bottom for mobile ease */}
           {state.activeView === 'dashboard' && (
-            <Dashboard 
-              sessions={state.sessions} 
+            <Dashboard
+              sessions={state.sessions}
               onNewSession={() => setView('uploader')}
               onViewSession={(id) => setView('study-hub', id)}
               user={state.user}
             />
           )}
-          
+
           {state.activeView === 'uploader' && (
             <FileUploader onProcessed={addSession} />
           )}
-          
+
           {state.activeView === 'study-hub' && activeSession && (
-            <StudyHub 
-              session={activeSession} 
+            <StudyHub
+              session={activeSession}
               onUpdateScore={(score) => updateSessionScore(activeSession.id, score)}
               onUpdateTitle={(title) => updateSessionTitle(activeSession.id, title)}
               onBack={() => setView('dashboard')}
@@ -271,8 +288,8 @@ const App: React.FC = () => {
           )}
 
           {state.activeView === 'library' && (
-            <LibraryView 
-              sessions={state.sessions} 
+            <LibraryView
+              sessions={state.sessions}
               folders={state.folders}
               onViewSession={(id) => setView('study-hub', id)}
               onToggleFavorite={toggleFavorite}
