@@ -66,9 +66,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
               <button
                 key={item.id}
                 onClick={() => setView(item.id as AppState['activeView'])}
-                className={`w-full flex items-center gap-4 px-5 py-3.5 md:py-4 rounded-2xl transition-all ${activeView === item.id
-                    ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-semibold'
+                className={`w-full flex items-center gap-4 px-5 py-3.5 md:py-4 rounded-2xl transition-all select-none touch-manipulation active:scale-[0.98] ${activeView === item.id
+                  ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-100'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-semibold'
                   }`}
               >
                 <item.icon size={22} strokeWidth={2.5} />
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
           <div className="mt-auto pt-6 border-t border-slate-50 shrink-0">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-5 py-3 text-slate-400 hover:text-red-600 transition-colors font-bold text-sm"
+              className="w-full flex items-center gap-3 px-5 py-3 text-slate-400 hover:text-red-600 transition-colors font-bold text-sm select-none touch-manipulation active:scale-[0.98]"
             >
               <LogOut size={20} />
               Sair da Conta
