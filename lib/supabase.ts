@@ -1,7 +1,11 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://xfmocsvvqqpcrglfqlwo.supabase.co';
-const supabaseAnonKey = 'sb_publishable_8CD1jhUsKRYLRxbDhyNTAQ_KT39GjyS';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn("Atenção: Variáveis do Supabase não configuradas no .env.local");
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
