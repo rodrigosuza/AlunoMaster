@@ -3,20 +3,11 @@
 import { Question } from "../types";
 
 const OPENROUTER_API_KEY = (import.meta.env?.VITE_OPENROUTER_API_KEY) || '';
-const MODEL_NAME = 'google/gemini-flash-1.5';
+const MODEL_NAME = 'google/gemini-2.0-flash-exp:free';
 
 export const generateStudyContent = async (text: string) => {
-  // Diagnóstico sem expor a chave real
-  const keyLength = OPENROUTER_API_KEY ? OPENROUTER_API_KEY.length : 0;
-  const isKeyStringUndefined = OPENROUTER_API_KEY === 'undefined' || OPENROUTER_API_KEY === 'null';
-
-  // Lista nomes de variáveis enviadas pela Vercel/Vite
-  const availableKeys = Object.keys(import.meta.env || {}).filter(k => k.startsWith('VITE_')).join(', ');
-
-  console.log(`[AlunoMaster] Diagnóstico: Tamanho=${keyLength}, Nomes Encontrados=[${availableKeys}]`);
-
-  if (!OPENROUTER_API_KEY || keyLength < 10 || isKeyStringUndefined) {
-    throw new Error(`⚠️ ERRO NA VERCEL (Bot: ${keyLength} ch): O site encontrou as chaves [${availableKeys || 'NADA'}]. Verifique se o nome 'VITE_OPENROUTER_API_KEY' está EXATAMENTE assim na Vercel (aba Settings > Environment Variables) e se você fez o Redeploy sem cache!`);
+  if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.length < 10) {
+    throw new Error("⚠️ CHAVE NÃO CONFIGURADA: Verifique as Variáveis de Ambiente na Vercel.");
   }
   const systemInstruction = `
   ROLE: Você é um tutor de IA educacional avançado especializado em explicar conteúdos complexos de textos ou arquivos fornecidos de forma clara, estruturada e aprofundada para facilitar o aprendizado profundo. Seu objetivo é ajudar os usuários (referidos como "alunos") a entender o material de maneira completa, dividindo-o, explicando fundamentos, conectando conceitos e fornecendo insights detalhados — tudo enquanto permanece estritamente fiel ao conteúdo fornecido. Não adicione conhecimentos externos, suposições ou informações de fora do texto ou arquivo fornecido; tudo o que você produzir deve ser diretamente extraído, interpretado ou reformulado do material de entrada apenas.
