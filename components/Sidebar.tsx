@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, PlusCircle, BookOpen, LogOut, FileText, ChevronRight, X } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, BookOpen, LogOut, FileText, ChevronRight, X, Loader2 } from 'lucide-react';
 import { AppState, StudySession } from '../types';
 import { supabase } from '../lib/supabase';
 
@@ -19,8 +19,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
     { id: 'library', icon: BookOpen, label: 'Biblioteca' },
   ];
 
+  const [logoutLoading, setLogoutLoading] = React.useState(false);
+
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    try {
+      setLogoutLoading(true);
+      console.log("Logout iniciado...");
+
+      // Clear Supabase session
+      const { error } = await supabase.auth.signOut();
+      if (error) console.error("Erro no signOut:", error);
+
+      // Force clear everything to be sure
+      localStorage.clear();
+      sessionStorage.clear();
+
+      console.log("Logout concluído, redirecionando...");
+
+      // Hard redirect to clear everything from memory
+      window.location.href = '/';
+    } catch (err) {
+      console.error("Erro fatal no logout:", err);
+      // Fallback redirect
+      window.location.href = '/';
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   return (
@@ -107,14 +131,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, sessions,
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="mt-auto pt-6 border-t border-slate-50 shrink-0">
+          {/* Footer with extra padding for Safari Mobile bar */}
+          <div className="mt-auto pt-6 pb-8 md:pb-0 border-t border-slate-50 shrink-0">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-5 py-3 text-slate-400 hover:text-red-600 transition-colors font-bold text-sm select-none touch-manipulation active:scale-[0.98]"
+              disabled={logoutLoading}
+              className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-slate-50 md:bg-transparent text-slate-500 hover:text-red-600 transition-all font-bold text-sm select-none touch-manipulation active:scale-[0.98] rounded-xl border border-transparent active:border-red-100 disabled:opacity-50"
             >
-              <LogOut size={20} />
-              Sair da Conta
+              {logoutLoading ? (
+                <Loader2 className="animate-spin" size={20} />
+              ) : (
+                <LogOut size={20} />
+              )}
+              {logoutLoading ? 'Saindo...' : 'Sair da Conta'}
             </button>
           </div>
         </div>
