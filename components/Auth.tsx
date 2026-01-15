@@ -13,13 +13,15 @@ export const Auth: React.FC<AuthProps> = ({ onAdminLogin }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // New state for password reset
+  // Listen for Supabase recovery events
   React.useEffect(() => {
-    // Check if we are coming from a password reset link
-    const hash = window.location.hash;
-    if (hash && hash.includes('type=recovery')) {
-      setView('reset-password');
-    }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setView('reset-password');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Form states

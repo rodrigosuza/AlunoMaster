@@ -30,33 +30,25 @@ const App: React.FC = () => {
       setInitializing(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setState(prev => ({ ...prev, user: session?.user ?? null }));
-      if (session?.user) fetchUserData(session.user.id);
-      else if (!state.user?.id?.startsWith('admin')) {
-        // Only clear state if it's not our local admin
-        setState(prev => ({ ...prev, sessions: [], folders: [] }));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecovering(true);
+      } else if (event === 'SIGNED_IN') {
+        // Only fetch user data and set user if it's a standard sign in 
+        // (not just a background recovery event)
+        setState(prev => ({ ...prev, user: session?.user ?? null }));
+        if (session?.user) fetchUserData(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setState(prev => ({ ...prev, user: null, sessions: [], folders: [] }));
+        setIsRecovering(false);
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Detect Password Recovery
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash && hash.includes('type=recovery')) {
-        setIsRecovering(true);
-      } else {
-        setIsRecovering(false);
-      }
-    };
+  // Remove hashing logic
 
-    handleHashChange(); // Check on mount
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
 
   const fetchUserData = async (userId: string) => {
     // If it's the local admin, we might not fetch from supabase or just fetch empty
