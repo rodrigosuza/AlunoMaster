@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StudySession } from '../types';
 import { QuizEngine } from './QuizEngine';
 import { SummaryView } from './SummaryView';
-import { BookOpen, HelpCircle, ArrowLeft, BarChart3, RefreshCcw, Sparkles, Loader2, Pencil, Trophy } from 'lucide-react';
+import { BookOpen, HelpCircle, ArrowLeft, RefreshCcw, Loader2, Pencil, Trophy } from 'lucide-react';
 import { generateStudyContent } from '../services/geminiService';
 
 interface StudyHubProps {
@@ -25,12 +25,6 @@ export const StudyHub: React.FC<StudyHubProps> = ({ session, onUpdateScore, onUp
   useEffect(() => {
     setTempTitle(session.title);
   }, [session.title]);
-
-  // Improved progress calculation: Average of (score% and consistency)
-  const basePercentage = Math.round((session.score / (session.totalQuestions || 10)) * 100);
-  // Learning domain grows with attempts if the user maintains a good score
-  const domainBoost = Math.min(attempts * 2, 10);
-  const percentage = Math.min(basePercentage + domainBoost, 100);
 
   useEffect(() => {
     if (mode === 'quiz' && (!session.questions || session.questions.length === 0)) {
@@ -73,7 +67,7 @@ export const StudyHub: React.FC<StudyHubProps> = ({ session, onUpdateScore, onUp
   };
 
   return (
-    <div className="max-w-6xl mx-auto w-full lg:h-full flex flex-col gap-4 animate-in fade-in duration-500">
+    <div className="max-w-5xl mx-auto w-full lg:h-full flex flex-col gap-4 animate-in fade-in duration-500">
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-4">
@@ -113,31 +107,43 @@ export const StudyHub: React.FC<StudyHubProps> = ({ session, onUpdateScore, onUp
           </div>
         </div>
 
-        <div className="flex bg-slate-200/50 p-1 rounded-xl border border-slate-200 shadow-inner w-full md:w-fit shrink-0">
-          <button
-            onClick={() => setMode('summary')}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg font-black text-xs transition-all ${mode === 'summary' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-100' : 'text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            <BookOpen size={16} />
-            Resumo
-          </button>
-          <button
-            onClick={() => setMode('quiz')}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg font-black text-xs transition-all ${mode === 'quiz' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-100' : 'text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            <HelpCircle size={16} />
-            Quiz
-          </button>
+        <div className="flex items-center gap-3">
+          {/* Manual Refresh available in header now that sidebar is gone */}
+          {mode === 'quiz' && !isRefreshing && (
+            <button
+              onClick={handleRefreshQuiz}
+              className="p-2.5 text-slate-400 hover:text-indigo-600 transition-colors bg-white rounded-xl border border-slate-200 shadow-sm"
+              title="Novo Quiz"
+            >
+              <RefreshCcw size={18} />
+            </button>
+          )}
+
+          <div className="flex bg-slate-200/50 p-1 rounded-xl border border-slate-200 shadow-inner w-full md:w-fit shrink-0">
+            <button
+              onClick={() => setMode('summary')}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg font-black text-xs transition-all ${mode === 'summary' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-100' : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              <BookOpen size={16} />
+              Resumo
+            </button>
+            <button
+              onClick={() => setMode('quiz')}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg font-black text-xs transition-all ${mode === 'quiz' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-100' : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              <HelpCircle size={16} />
+              Quiz
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Study Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-5 lg:flex-1 lg:overflow-hidden lg:min-h-0">
-
-        {/* Central Content */}
-        <div className="lg:col-span-9 flex flex-col lg:overflow-hidden lg:h-full order-1">
+      <div className="flex flex-col lg:flex-1 lg:overflow-hidden lg:min-h-0">
+        {/* Central Content - Full Width */}
+        <div className="flex flex-col lg:overflow-hidden lg:h-full">
           {mode === 'summary' ? (
             <SummaryView session={session} onBackToDashboard={onBack} hideHeader />
           ) : (
@@ -157,64 +163,21 @@ export const StudyHub: React.FC<StudyHubProps> = ({ session, onUpdateScore, onUp
             )
           )}
         </div>
-
-        {/* Sidebar Status - Hidden on Mobile */}
-        <aside className="hidden lg:col-span-3 space-y-4 lg:flex lg:flex-col lg:overflow-y-auto lg:pr-1 lg:h-full order-2">
-          <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-lg shadow-slate-100/20">
-            <h3 className="font-black text-slate-900 text-xs mb-4 flex items-center gap-2 uppercase tracking-tight">
-              <BarChart3 size={14} className="text-indigo-600" />
-              Sua Evolução
-            </h3>
-            <div className="space-y-4">
-              <div className="text-center py-5 bg-slate-50 rounded-[20px] border border-slate-100 relative">
-                <div className="text-4xl font-black text-indigo-600 mb-1 leading-none">{percentage}%</div>
-                <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">Domínio Alcançado</div>
-                <div className="mt-3 text-[8px] font-black text-indigo-400 uppercase tracking-widest">
-                  {attempts} {attempts === 1 ? 'Prática Realizada' : 'Práticas Realizadas'}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-[8px] font-black uppercase text-slate-500 px-1 tracking-widest">
-                  <span>Placar do Quiz</span>
-                  <span>{session.score}/{session.totalQuestions || 10}</span>
-                </div>
-                <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden p-0.5 shadow-inner">
-                  <div
-                    className="h-full bg-indigo-500 rounded-full transition-all duration-1000 shadow-sm"
-                    style={{ width: `${percentage}%` }}
-                  />
-                </div>
-              </div>
-
-              {mode === 'quiz' && (
-                <button
-                  onClick={handleRefreshQuiz}
-                  disabled={isRefreshing}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-indigo-50 text-indigo-600 font-black text-[9px] uppercase tracking-widest hover:bg-indigo-100 transition-colors border border-indigo-100"
-                >
-                  {isRefreshing ? <Loader2 className="animate-spin" size={12} /> : <RefreshCcw size={12} />}
-                  Novo Quiz IA
-                </button>
-              )}
-            </div>
-          </div>
-        </aside>
       </div>
 
-      {/* Score Splash Screen for Mobile/Desktop completion */}
+      {/* Score Splash Screen */}
       {showScoreSplash && (
         <div className="fixed inset-0 z-[100] bg-indigo-600 flex flex-col items-center justify-center text-white p-6 animate-in fade-in zoom-in duration-300">
-          <div className="bg-white/20 p-6 rounded-full mb-6">
-            <Trophy size={80} className="text-yellow-300" />
+          <div className="bg-white/20 p-6 rounded-full mb-6 text-yellow-300">
+            <Trophy size={80} />
           </div>
-          <h2 className="text-4xl font-black mb-2 text-center">Quiz Finalizado!</h2>
-          <div className="text-8xl font-black mb-4">{Math.round((lastScore / (session.totalQuestions || 10)) * 100)}%</div>
-          <p className="text-xl font-bold opacity-90 text-center">Domínio alcançado nesta rodada.</p>
+          <h2 className="text-4xl font-black mb-2 text-center text-white">Quiz Finalizado!</h2>
+          <div className="text-8xl font-black mb-4 text-white">{Math.round((lastScore / (session.totalQuestions || 10)) * 100)}%</div>
+          <p className="text-xl font-bold opacity-90 text-center text-indigo-100">Domínio alcançado nesta rodada.</p>
 
           <div className="mt-12 flex items-center gap-3 bg-white/10 px-6 py-3 rounded-2xl backdrop-blur-md">
             <Loader2 className="animate-spin" size={20} />
-            <span className="font-bold text-sm">Preparando novo desafio...</span>
+            <span className="font-bold text-sm">Preparando o próximo nível...</span>
           </div>
         </div>
       )}
