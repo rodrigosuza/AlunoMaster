@@ -16,7 +16,11 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({ session, onComplete }) =
   const [showExplanation, setShowExplanation] = useState(false);
 
   const question = session.questions[currentIdx];
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
   const handleSelect = (idx: number) => {
     if (isAnswered) return;
     setSelectedIdx(idx);
@@ -61,16 +65,26 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({ session, onComplete }) =
           </div>
           <div className="flex gap-1">
             {session.questions.map((_, i) => (
+<<<<<<< HEAD
               <div
                 key={i}
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === currentIdx ? 'bg-indigo-600 w-4' : i < currentIdx ? 'bg-indigo-200' : 'bg-slate-100'}`}
+=======
+              <div 
+                key={i} 
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === currentIdx ? 'bg-indigo-600 w-4' : i < currentIdx ? 'bg-indigo-200' : 'bg-slate-100'}`} 
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
               />
             ))}
           </div>
         </div>
 
         {/* Question heading - compact but visible */}
+<<<<<<< HEAD
         <h2 className="text-base md:text-lg font-bold md:font-black text-slate-900 mb-3 md:mb-4 leading-tight shrink-0">
+=======
+        <h2 className="text-lg font-black text-slate-900 mb-4 leading-tight shrink-0">
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
           {question.text}
         </h2>
 
@@ -79,7 +93,11 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({ session, onComplete }) =
           {question.options.map((option, idx) => {
             const isCorrect = idx === question.correctAnswerIndex;
             const isSelected = idx === selectedIdx;
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
             let variant = "bg-slate-50 border-slate-100 text-slate-900 hover:border-indigo-200 hover:bg-slate-100";
             if (isAnswered) {
               if (isCorrect) variant = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-2 ring-emerald-500/5";
@@ -94,6 +112,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({ session, onComplete }) =
                 key={idx}
                 onClick={() => handleSelect(idx)}
                 disabled={isAnswered}
+<<<<<<< HEAD
                 className={`w-full group flex items-center justify-between p-2.5 md:p-3 rounded-xl border-2 transition-all duration-150 text-left ${variant}`}
               >
                 <div className="flex items-center gap-2 md:gap-3 flex-1">
@@ -113,6 +132,29 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({ session, onComplete }) =
           {showExplanation && (
             <div className={`hidden md:block p-4 rounded-xl mt-2 animate-in slide-in-from-bottom-2 duration-300 border shadow-sm ${selectedIdx === question.correctAnswerIndex ? 'bg-emerald-50/50 border-emerald-100' : 'bg-red-50/50 border-red-100'
               }`}>
+=======
+                className={`w-full group flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-150 text-left ${variant}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0 ${
+                    isSelected ? 'bg-indigo-600 text-white' : 'bg-white text-slate-400 border border-slate-100'
+                  }`}>
+                    {String.fromCharCode(65 + idx)}
+                  </span>
+                  <span className="text-sm leading-snug">{option}</span>
+                </div>
+                {isAnswered && isCorrect && <CheckCircle2 className="text-emerald-600 shrink-0" size={18} />}
+                {isAnswered && isSelected && !isCorrect && <XCircle className="text-red-600 shrink-0" size={18} />}
+              </button>
+            );
+          })}
+          
+          {/* Explanation shows within the scrollable area to prevent master layout scrolling */}
+          {showExplanation && (
+            <div className={`p-4 rounded-xl mt-2 animate-in slide-in-from-bottom-2 duration-300 border shadow-sm ${
+              selectedIdx === question.correctAnswerIndex ? 'bg-emerald-50/50 border-emerald-100' : 'bg-red-50/50 border-red-100'
+            }`}>
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
               <div className="flex items-center gap-2 mb-1">
                 <Info size={12} className={selectedIdx === question.correctAnswerIndex ? 'text-emerald-600' : 'text-red-600'} />
                 <span className="font-black text-[9px] uppercase tracking-widest text-slate-500">Explicação Didática</span>
@@ -130,14 +172,22 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({ session, onComplete }) =
             <button
               onClick={handleConfirm}
               disabled={selectedIdx === null}
+<<<<<<< HEAD
               className="bg-indigo-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-bold md:font-black text-[11px] md:text-xs hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-indigo-100 active:scale-95"
+=======
+              className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-black text-xs hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-indigo-100 active:scale-95"
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
             >
               Confirmar Resposta
             </button>
           ) : (
             <button
               onClick={handleNext}
+<<<<<<< HEAD
               className="bg-slate-900 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-bold md:font-black text-[11px] md:text-xs hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg"
+=======
+              className="bg-slate-900 text-white px-8 py-3 rounded-xl font-black text-xs hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg"
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
             >
               {currentIdx + 1 === session.questions.length ? 'Finalizar Quiz' : 'Próxima'}
               <ChevronRight size={14} />

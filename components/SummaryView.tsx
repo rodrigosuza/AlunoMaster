@@ -39,7 +39,11 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ session, onBackToDashb
         return <h1 key={i} className="text-2xl md:text-3xl font-black text-indigo-700 mb-6 mt-2 border-b-4 border-indigo-100 pb-2 tracking-tight uppercase">{trimmedLine.replace('# ', '')}</h1>;
       }
       if (trimmedLine.startsWith('## ')) {
+<<<<<<< HEAD
         return <h2 key={i} className="text-lg md:text-2xl font-bold md:font-black text-slate-900 mb-3 md:mb-4 mt-6 md:mt-8 flex items-center gap-3"><div className="w-1.5 h-6 md:h-7 bg-indigo-500 rounded-full"></div> {trimmedLine.replace('## ', '')}</h2>;
+=======
+        return <h2 key={i} className="text-xl md:text-2xl font-black text-slate-900 mb-4 mt-8 flex items-center gap-3"><div className="w-1.5 h-6 md:h-7 bg-indigo-500 rounded-full"></div> {trimmedLine.replace('## ', '')}</h2>;
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
       }
       if (trimmedLine.startsWith('### ')) {
         return <h3 key={i} className="text-lg md:text-xl font-extrabold text-indigo-600 mb-3 mt-6 pl-4 border-l-4 border-indigo-200">{trimmedLine.replace('### ', '')}</h3>;
@@ -52,9 +56,15 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ session, onBackToDashb
           </li>
         );
       }
+<<<<<<< HEAD
 
       return (
         <p key={i} className="mb-4 text-slate-900 leading-relaxed font-medium md:font-semibold text-sm md:text-lg">
+=======
+      
+      return (
+        <p key={i} className="mb-5 text-slate-900 leading-relaxed font-semibold text-base md:text-lg">
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
           {renderFormattedText(trimmedLine)}
         </p>
       );
@@ -73,7 +83,11 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ session, onBackToDashb
               <Trophy size={40} className="text-yellow-300" />
             </div>
             <h2 className="text-3xl font-black mb-1">Resumo Dominado!</h2>
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
             <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto mt-6">
               <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-md border border-white/20">
                 <div className="text-3xl font-black">{session.score}</div>
@@ -109,7 +123,11 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ session, onBackToDashb
             <div className="mt-8 flex justify-center shrink-0">
               <button
                 onClick={onBackToDashboard}
+<<<<<<< HEAD
                 className="flex items-center gap-2 px-8 md:px-10 py-3 md:py-4 bg-slate-900 text-white font-bold md:font-black text-base md:text-lg rounded-2xl hover:bg-slate-800 transition-all shadow-xl active:scale-95"
+=======
+                className="flex items-center gap-2 px-10 py-4 bg-slate-900 text-white font-black text-lg rounded-2xl hover:bg-slate-800 transition-all shadow-xl active:scale-95"
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
               >
                 <LayoutDashboard size={20} />
                 Finalizar Estudo

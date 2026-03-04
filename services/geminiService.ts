@@ -123,6 +123,7 @@ export const generateStudyContent = async (text: string) => {
     }
 
     const questions: Question[] = (result.questions || []).slice(0, 10).map((q: any, idx: number) => {
+<<<<<<< HEAD
       const originalOptions = (q.options || [])
         .filter((opt: any) => typeof opt === 'string')
         .slice(0, 4);
@@ -143,6 +144,15 @@ export const generateStudyContent = async (text: string) => {
         ...q,
         options: shuffledOptions,
         correctAnswerIndex: newCorrectIndex !== -1 ? newCorrectIndex : q.correctAnswerIndex,
+=======
+      const cleanOptions = (q.options || [])
+        .filter((opt: any) => typeof opt === 'string')
+        .slice(0, 4);
+
+      return {
+        ...q,
+        options: cleanOptions,
+>>>>>>> 41a3eaed6deb87102ed75d5a2024e8b5889700ef
         id: `q-${idx}-${Date.now()}`
       };
     });
